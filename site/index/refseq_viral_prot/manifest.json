@@ -1,0 +1,53 @@
+{
+  "name": "refseq_viral_prot",
+  "title": "NCBI RefSeq viral proteins (including phages)",
+  "description": "All RefSeq viral proteins with NCBI taxonomy, bacteriophages included. Reads are translated and matched at the protein level, which finds viruses too divergent for nucleotide matching. Large: plan for about 1 GB of browser memory.",
+  "taxonomy": "NCBI",
+  "sequences": 722738,
+  "bases": 175001826,
+  "offrate": 5,
+  "protein": true,
+  "example": "mockVirome",
+  "centrifugerVersion": "1.2.0-r367",
+  "built": "2026-10-25",
+  "files": [
+    {
+      "name": "refseq_viral_prot.1.cfr",
+      "parts": [
+        "refseq_viral_prot.1.cfr.gz.part00",
+        "refseq_viral_prot.1.cfr.gz.part01",
+        "refseq_viral_prot.1.cfr.gz.part02"
+      ],
+      "size": 165447314,
+      "gzSize": 109927837,
+      "sha256": "b8e1020613de1db5bca84f90978a4c3408bc1b552734b623b3857a3f5802cb2f"
+    },
+    {
+      "name": "refseq_viral_prot.2.cfr",
+      "parts": [
+        "refseq_viral_prot.2.cfr.gz.part00"
+      ],
+      "size": 23309796,
+      "gzSize": 2191239,
+      "sha256": "169508504b3535217eb1271cf7e1f47301896a5b05dc29eba193b1191b492696"
+    },
+    {
+      "name": "refseq_viral_prot.3.cfr",
+      "parts": [
+        "refseq_viral_prot.3.cfr.gz.part00"
+      ],
+      "size": 11563792,
+      "gzSize": 2842695,
+      "sha256": "fbb459bdf806c45d6e30ca23526d2baf9a2b195cb75b7418b805725d96e5d7e9"
+    },
+    {
+      "name": "refseq_viral_prot.4.cfr",
+      "parts": [
+        "refseq_viral_prot.4.cfr.gz.part00"
+      ],
+      "size": 97,
+      "gzSize": 137,
+      "sha256": "a803ce94941471f7e8c46ee868f0406d9aa6f1c5d67bbd20a7f8542ff915ca65"
+    }
+  ]
+}

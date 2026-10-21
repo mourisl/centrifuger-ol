@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Centrifuger Web</title>
+  <meta name="description" content="Taxonomic classification and abundance estimation of sequencing reads with Centrifuger, running entirely in your browser via WebAssembly.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <h1>Centrifuger <span class="tag">Web</span></h1>
+      <p class="lede">Classify sequencing reads (16S/18S/ITS amplicons or viral shotgun reads) and estimate taxon abundance with
+        <a href="https://github.com/mourisl/centrifuger" target="_blank" rel="noopener">Centrifuger</a>,
+        compiled to WebAssembly. Your files are processed on this computer and are never uploaded.</p>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div id="unsupported" class="notice error" hidden>
+      This page needs a browser with 64-bit WebAssembly memory (memory64): Chrome or Edge 133+, or Firefox 134+.
+      Your browser does not support it yet.
+    </div>
+
+    <section class="card" id="index-card">
+      <div class="card-head">
+        <h2>Reference index</h2>
+        <span id="index-status" class="pill">Not loaded</span>
+      </div>
+      <select id="index-select" aria-label="Reference index" disabled><option>Loading…</option></select>
+      <p id="index-desc" class="muted">Loading index information…</p>
+      <div class="progress" id="index-progress" hidden><div class="bar"></div></div>
+    </section>
+
+    <section class="card" id="input-card">
+      <div class="card-head">
+        <h2>Reads</h2>
+        <div class="segmented" role="radiogroup" aria-label="Read layout">
+          <label><input type="radio" name="layout" value="single" checked> Single-end</label>
+          <label><input type="radio" name="layout" value="paired"> Paired-end</label>
+        </div>
+      </div>
+
+      <div class="drops">
+        <label class="drop" id="drop1">
+          <input type="file" id="file1" accept=".fq,.fastq,.fa,.fasta,.fna,.gz">
+          <span class="drop-title" id="drop1-title">FASTQ / FASTA file</span>
+          <span class="drop-file" id="drop1-file">Drop a file here or click to choose (.fq, .fastq, .fa, optionally .gz)</span>
+        </label>
+        <label class="drop" id="drop2" hidden>
+          <input type="file" id="file2" accept=".fq,.fastq,.fa,.fasta,.fna,.gz">
+          <span class="drop-title">Mate 2</span>
+          <span class="drop-file" id="drop2-file">Drop a file here or click to choose</span>
+        </label>
+      </div>
+
+      <details class="options">
+        <summary>Options</summary>
+        <div class="opt-grid">
+          <label>Assignments per read (<code>-k</code>)
+            <input type="number" id="opt-k" min="1" max="20" value="1">
+          </label>
+          <label>Minimum partial hit length (<code>--min-hitlen</code>)
+            <input type="number" id="opt-minhit" min="1" placeholder="auto">
+          </label>
+          <label class="check"><input type="checkbox" id="opt-nodust"> Disable DUST masking (<code>--no-dust</code>)</label>
+        </div>
+      </details>
+
+      <div class="actions">
+        <button id="run" class="primary" disabled>Classify</button>
+        <button id="example" class="secondary" disabled>Try example data</button>
+        <span id="example-note" class="muted small"></span>
+      </div>
+
+      <div id="run-status" hidden>
+        <div class="stage"><span id="stage-text">Starting…</span><span id="stage-pct"></span></div>
+        <div class="progress"><div class="bar" id="run-bar"></div></div>
+      </div>
+      <div id="error" class="notice error" hidden></div>
+    </section>
+
+    <section class="card" id="results" hidden>
+      <div class="card-head">
+        <h2>Results</h2>
+        <div class="downloads">
+          <button class="secondary small-btn" id="dl-class">Per-read classification (.tsv.gz)</button>
+          <select id="report-format" aria-label="Quantification report format">
+            <option value="centrifuger">Centrifuger abundance table</option>
+            <option value="metaphlan">MetaPhlAn-style profile</option>
+            <option value="cami">CAMI-II profile</option>
+            <option value="kreport">Kraken2-style report</option>
+          </select>
+          <button class="secondary small-btn" id="dl-report">Download report</button>
+        </div>
+      </div>
+
+      <div class="tiles">
+        <div class="tile"><div class="tile-label">Reads</div><div class="tile-value" id="st-reads">–</div></div>
+        <div class="tile"><div class="tile-label">Classified</div><div class="tile-value" id="st-class">–</div></div>
+        <div class="tile"><div class="tile-label" id="st-taxa-label">Taxa</div><div class="tile-value" id="st-taxa">–</div></div>
+        <div class="tile"><div class="tile-label">Run time</div><div class="tile-value" id="st-time">–</div></div>
+      </div>
+
+      <div class="controls">
+        <label>Rank
+          <select id="rank">
+            <option value="species">Species</option>
+            <option value="genus" selected>Genus</option>
+            <option value="family">Family</option>
+            <option value="order">Order</option>
+            <option value="class">Class</option>
+            <option value="phylum">Phylum</option>
+            <option value="all">All ranks</option>
+          </select>
+        </label>
+        <label>Measure
+          <select id="measure">
+            <option value="reads">Read share</option>
+            <option value="abundance">Abundance (length-normalized)</option>
+          </select>
+        </label>
+        <label class="grow">Filter
+          <input type="search" id="filter" placeholder="Taxon name or ID">
+        </label>
+      </div>
+
+      <figure class="chart-fig">
+        <div id="chart"></div>
+        <figcaption class="muted small" id="chart-caption"></figcaption>
+      </figure>
+
+      <figure class="chart-fig sankey-fig">
+        <div class="sankey-head">
+          <h3>Taxonomic flow</h3>
+          <label>Taxa per rank
+            <select id="sankey-top">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="15">15</option>
+              <option value="20">20</option>
+            </select>
+          </label>
+        </div>
+        <div class="legend" id="sankey-legend"></div>
+        <div class="sankey-wrap" id="sankey"></div>
+        <div class="sankey-tip" id="sankey-tip" role="tooltip" hidden></div>
+        <figcaption class="muted small" id="sankey-caption"></figcaption>
+      </figure>
+
+      <div class="table-wrap">
+        <table id="table">
+          <thead>
+            <tr>
+              <th data-key="name">Taxon</th>
+              <th data-key="taxRank">Rank</th>
+              <th data-key="taxID" class="num">Tax ID</th>
+              <th data-key="numReads" class="num">Reads</th>
+              <th data-key="numUniqueReads" class="num">Unique reads</th>
+              <th data-key="readShare" class="num">Read share</th>
+              <th data-key="abundance" class="num">Abundance</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="muted small">"Reads" counts reads assigned to the taxon or its descendants. "Abundance" is Centrifuger's EM estimate,
+        normalized by reference sequence length.
+        All report formats are produced by <code>centrifuger-quant --output-format</code>; their percentages are the abundance
+        estimates (in the Kraken2-style report, the read-count columns are reads in the clade and reads assigned directly).</p>
+    </section>
+
+    <details class="card log-card">
+      <summary>Log</summary>
+      <pre id="log"></pre>
+    </details>
+  </main>
+
+  <footer class="wrap muted small">
+    Please cite: Song L, Langmead B. Centrifuger: lossless compression of microbial genomes for efficient and accurate metagenomic sequence classification. <a href="https://doi.org/10.1186/s13059-024-03244-4" target="_blank" rel="noopener"><em>Genome Biol.</em> 25, 106 (2024)</a>.
+    References: NCBI RefSeq and Taxonomy, GTDB, and SILVA (CC BY 4.0); see each index's description.
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

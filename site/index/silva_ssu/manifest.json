@@ -1,0 +1,51 @@
+{
+  "name": "silva_ssu",
+  "title": "SILVA 138.2 SSU Ref NR99",
+  "description": "SILVA 138.2 small-subunit rRNA (16S/18S) non-redundant reference with SILVA taxonomy (resolves to genus). For 16S/18S amplicon reads across all domains.",
+  "taxonomy": "SILVA 138.2",
+  "sequences": 510495,
+  "bases": 747372381,
+  "offrate": 7,
+  "example": "mock16s",
+  "centrifugerVersion": "1.2.0-r367",
+  "built": "2026-10-21",
+  "files": [
+    {
+      "name": "silva_ssu.1.cfr",
+      "parts": [
+        "silva_ssu.1.cfr.gz.part00",
+        "silva_ssu.1.cfr.gz.part01"
+      ],
+      "size": 115385470,
+      "gzSize": 66996544,
+      "sha256": "c5c32355981db32da24b6d4bd88e607996b1cd0511464d2f8168dade3137c3cb"
+    },
+    {
+      "name": "silva_ssu.2.cfr",
+      "parts": [
+        "silva_ssu.2.cfr.gz.part00"
+      ],
+      "size": 17154812,
+      "gzSize": 3512486,
+      "sha256": "bd48f4e6926938b18051e25094d4323dbb222c1d678a8ed4998464397f00efdf"
+    },
+    {
+      "name": "silva_ssu.3.cfr",
+      "parts": [
+        "silva_ssu.3.cfr.gz.part00"
+      ],
+      "size": 8167920,
+      "gzSize": 1791521,
+      "sha256": "87980a1612916be5645d8c0020a6d2f448168d07b31153f501b696d09c627357"
+    },
+    {
+      "name": "silva_ssu.4.cfr",
+      "parts": [
+        "silva_ssu.4.cfr.gz.part00"
+      ],
+      "size": 98,
+      "gzSize": 132,
+      "sha256": "88a7984474dbc67abfe98f7d26f8aca867984bab0655fe0ae9b2ced61c752c82"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "name": "refseq16s",
+  "title": "NCBI RefSeq 16S rRNA (Bacteria + Archaea)",
+  "description": "RefSeq Targeted Loci 16S rRNA sequences with NCBI taxonomy. For 16S amplicon reads.",
+  "taxonomy": "NCBI",
+  "sequences": 28036,
+  "bases": 40608964,
+  "offrate": 4,
+  "example": "mock16s",
+  "centrifugerVersion": "1.2.0-r367",
+  "built": "2026-10-21",
+  "files": [
+    {
+      "name": "refseq16s.1.cfr",
+      "parts": [
+        "refseq16s.1.cfr.gz.part00"
+      ],
+      "size": 26276374,
+      "gzSize": 11366386,
+      "sha256": "0e7ee3e419fa575f094d0c816b3a343e3846fc427375b83002311fb0e6f7531f"
+    },
+    {
+      "name": "refseq16s.2.cfr",
+      "parts": [
+        "refseq16s.2.cfr.gz.part00"
+      ],
+      "size": 2309621,
+      "gzSize": 528732,
+      "sha256": "8fb1babc9af8e8ddc2876f5a5be91c30f7c2ad578856806ca664517567f341af"
+    },
+    {
+      "name": "refseq16s.3.cfr",
+      "parts": [
+        "refseq16s.3.cfr.gz.part00"
+      ],
+      "size": 448576,
+      "gzSize": 103443,
+      "sha256": "7c2cf55c4c91ee7e95edb8aada48957adb55ba8194eae5fac35fd791f90534d0"
+    },
+    {
+      "name": "refseq16s.4.cfr",
+      "parts": [
+        "refseq16s.4.cfr.gz.part00"
+      ],
+      "size": 97,
+      "gzSize": 128,
+      "sha256": "f9c86cfc3414d0977478fb316e938deca61275b984ee717a7aec2df4dfb58ba3"
+    }
+  ]
+}

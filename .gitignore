@@ -1,0 +1,7 @@
+emsdk/
+centrifuger-src/
+build/
+index_build/
+# Index parts are release assets, not tracked (see scripts/publish_indices.sh)
+site/index/*/*.part*
+__pycache__/

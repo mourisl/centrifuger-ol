@@ -1,0 +1,51 @@
+{
+  "name": "refseq_viral",
+  "title": "NCBI RefSeq viral genomes (excluding phages)",
+  "description": "RefSeq viral genomes with NCBI taxonomy, excluding bacteriophages (Caudoviricetes and sequences named phage). For shotgun reads from eukaryotic viruses.",
+  "taxonomy": "NCBI",
+  "sequences": 13052,
+  "bases": 184328519,
+  "offrate": 6,
+  "example": "mockViral",
+  "centrifugerVersion": "1.2.0-r367",
+  "built": "2026-10-21",
+  "files": [
+    {
+      "name": "refseq_viral.1.cfr",
+      "parts": [
+        "refseq_viral.1.cfr.gz.part00",
+        "refseq_viral.1.cfr.gz.part01"
+      ],
+      "size": 76866978,
+      "gzSize": 61465163,
+      "sha256": "5c3d91010a095913f784aedce3cf20855b22df101cf495ec72a0e60efb99ef53"
+    },
+    {
+      "name": "refseq_viral.2.cfr",
+      "parts": [
+        "refseq_viral.2.cfr.gz.part00"
+      ],
+      "size": 1336224,
+      "gzSize": 268178,
+      "sha256": "fc6eab1919a6224d5f8d2ec20f781f35e95edc43d920f9a7fc4355397c7a0569"
+    },
+    {
+      "name": "refseq_viral.3.cfr",
+      "parts": [
+        "refseq_viral.3.cfr.gz.part00"
+      ],
+      "size": 208832,
+      "gzSize": 60968,
+      "sha256": "d70da62bb44ce9c191e83e75d5cdb2f8635f362c9664cf833caaac6ca258ee09"
+    },
+    {
+      "name": "refseq_viral.4.cfr",
+      "parts": [
+        "refseq_viral.4.cfr.gz.part00"
+      ],
+      "size": 97,
+      "gzSize": 132,
+      "sha256": "c5f37c08c42277dce21cd064790db89ee5e21d0305a4a06530f0249730bacb31"
+    }
+  ]
+}

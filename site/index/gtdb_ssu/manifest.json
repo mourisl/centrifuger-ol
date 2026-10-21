@@ -1,0 +1,50 @@
+{
+  "name": "gtdb_ssu",
+  "title": "GTDB R232 16S rRNA of species representatives",
+  "description": "16S rRNA genes of GTDB R232 species-representative genomes (Bacteria + Archaea) with GTDB taxonomy, unfiltered. Some representative genomes carry contaminating 16S genes and GTDB splits many genera (e.g. Enterococcus, Enterococcus_C), so expect more reads to stop above genus than with RefSeq 16S.",
+  "taxonomy": "GTDB R232",
+  "sequences": 93770,
+  "bases": 123176683,
+  "offrate": 5,
+  "example": "mock16s",
+  "centrifugerVersion": "1.2.0-r367",
+  "built": "2026-10-21",
+  "files": [
+    {
+      "name": "gtdb_ssu.1.cfr",
+      "parts": [
+        "gtdb_ssu.1.cfr.gz.part00"
+      ],
+      "size": 40614886,
+      "gzSize": 22842726,
+      "sha256": "d18a2fa7e453644d1e9458840bac73f18d0ccc98b6408dfcc2a1495e7e24eb79"
+    },
+    {
+      "name": "gtdb_ssu.2.cfr",
+      "parts": [
+        "gtdb_ssu.2.cfr.gz.part00"
+      ],
+      "size": 9571631,
+      "gzSize": 2217251,
+      "sha256": "d3225c76c9e44d254d0be9be08c44af9f731dc7055a6201ed75e3c03069f0777"
+    },
+    {
+      "name": "gtdb_ssu.3.cfr",
+      "parts": [
+        "gtdb_ssu.3.cfr.gz.part00"
+      ],
+      "size": 1500320,
+      "gzSize": 367745,
+      "sha256": "2dc15a787eb942418e5943ce58ce3c10deb9f5a2dc1f8b7b6ddd4e808ef37654"
+    },
+    {
+      "name": "gtdb_ssu.4.cfr",
+      "parts": [
+        "gtdb_ssu.4.cfr.gz.part00"
+      ],
+      "size": 97,
+      "gzSize": 128,
+      "sha256": "0ce37271b62e25e0dc9babd955fc901dec058df982c4de139232fb76109d834a"
+    }
+  ]
+}

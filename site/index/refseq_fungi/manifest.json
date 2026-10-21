@@ -1,0 +1,50 @@
+{
+  "name": "refseq_fungi",
+  "title": "NCBI RefSeq fungal ITS, 18S and 28S rRNA",
+  "description": "RefSeq Targeted Loci fungal ITS, 18S and 28S rRNA sequences with NCBI taxonomy. For fungal (mycobiome) amplicon reads.",
+  "taxonomy": "NCBI",
+  "sequences": 37313,
+  "bases": 29800866,
+  "offrate": 4,
+  "example": "mockITS",
+  "centrifugerVersion": "1.2.0-r367",
+  "built": "2026-10-21",
+  "files": [
+    {
+      "name": "refseq_fungi.1.cfr",
+      "parts": [
+        "refseq_fungi.1.cfr.gz.part00"
+      ],
+      "size": 25430614,
+      "gzSize": 11720702,
+      "sha256": "b0d48984159fcfaa90869a4c303ed5d4fb6649ad1cf38ff8059feeed13d2c188"
+    },
+    {
+      "name": "refseq_fungi.2.cfr",
+      "parts": [
+        "refseq_fungi.2.cfr.gz.part00"
+      ],
+      "size": 2508881,
+      "gzSize": 547658,
+      "sha256": "ac206869c97e1f8ff7014f881d148422c94df03debb668697706d31600fbebbf"
+    },
+    {
+      "name": "refseq_fungi.3.cfr",
+      "parts": [
+        "refseq_fungi.3.cfr.gz.part00"
+      ],
+      "size": 597008,
+      "gzSize": 146125,
+      "sha256": "d00cf0db6af4a36a68ecc8b5b7983ccb06492ad5bd49f1ed3ca4b6da718cb317"
+    },
+    {
+      "name": "refseq_fungi.4.cfr",
+      "parts": [
+        "refseq_fungi.4.cfr.gz.part00"
+      ],
+      "size": 97,
+      "gzSize": 132,
+      "sha256": "3f8d38a588de32dde79f8e6e4eb4c3fbb84569c76798ddbec0e67b4e459aed36"
+    }
+  ]
+}

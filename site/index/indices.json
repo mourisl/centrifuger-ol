@@ -1,0 +1,131 @@
+{
+  "default": "refseq16s",
+  "indices": [
+    {
+      "name": "refseq16s",
+      "title": "NCBI RefSeq 16S rRNA (Bacteria + Archaea)",
+      "description": "RefSeq Targeted Loci 16S rRNA sequences with NCBI taxonomy. For 16S amplicon reads.",
+      "taxonomy": "NCBI",
+      "sequences": 28036,
+      "bases": 40608964,
+      "protein": false,
+      "size": 29034668,
+      "gzSize": 11998689,
+      "built": "2026-10-21",
+      "centrifugerVersion": "1.2.0-r367",
+      "example": {
+        "url": "example/mock16s.fq.gz",
+        "label": "5,000 simulated 150 bp 16S reads from a 9-species mock community"
+      },
+      "defaultRank": "genus"
+    },
+    {
+      "name": "gtdb_ssu",
+      "title": "GTDB R232 16S rRNA of species representatives",
+      "description": "16S rRNA genes of GTDB R232 species-representative genomes (Bacteria + Archaea) with GTDB taxonomy, unfiltered. Some representative genomes carry contaminating 16S genes and GTDB splits many genera (e.g. Enterococcus, Enterococcus_C), so expect more reads to stop above genus than with RefSeq 16S.",
+      "taxonomy": "GTDB R232",
+      "sequences": 93770,
+      "bases": 123176683,
+      "protein": false,
+      "size": 51686934,
+      "gzSize": 25427850,
+      "built": "2026-10-21",
+      "centrifugerVersion": "1.2.0-r367",
+      "example": {
+        "url": "example/mock16s.fq.gz",
+        "label": "5,000 simulated 150 bp 16S reads from a 9-species mock community"
+      },
+      "defaultRank": "genus"
+    },
+    {
+      "name": "silva_ssu",
+      "title": "SILVA 138.2 SSU Ref NR99",
+      "description": "SILVA 138.2 small-subunit rRNA (16S/18S) non-redundant reference with SILVA taxonomy (resolves to genus). For 16S/18S amplicon reads across all domains.",
+      "taxonomy": "SILVA 138.2",
+      "sequences": 510495,
+      "bases": 747372381,
+      "protein": false,
+      "size": 140708300,
+      "gzSize": 72300683,
+      "built": "2026-10-21",
+      "centrifugerVersion": "1.2.0-r367",
+      "example": {
+        "url": "example/mock16s.fq.gz",
+        "label": "5,000 simulated 150 bp 16S reads from a 9-species mock community"
+      },
+      "defaultRank": "genus"
+    },
+    {
+      "name": "refseq_fungi",
+      "title": "NCBI RefSeq fungal ITS, 18S and 28S rRNA",
+      "description": "RefSeq Targeted Loci fungal ITS, 18S and 28S rRNA sequences with NCBI taxonomy. For fungal (mycobiome) amplicon reads.",
+      "taxonomy": "NCBI",
+      "sequences": 37313,
+      "bases": 29800866,
+      "protein": false,
+      "size": 28536600,
+      "gzSize": 12414617,
+      "built": "2026-10-21",
+      "centrifugerVersion": "1.2.0-r367",
+      "example": {
+        "url": "example/mockITS.fq.gz",
+        "label": "5,000 simulated 150 bp ITS reads from an 8-species fungal mock community"
+      },
+      "defaultRank": "genus"
+    },
+    {
+      "name": "refseq_viral",
+      "title": "NCBI RefSeq viral genomes (excluding phages)",
+      "description": "RefSeq viral genomes with NCBI taxonomy, excluding bacteriophages (Caudoviricetes and sequences named phage). For shotgun reads from eukaryotic viruses.",
+      "taxonomy": "NCBI",
+      "sequences": 13052,
+      "bases": 184328519,
+      "protein": false,
+      "size": 78412131,
+      "gzSize": 61794441,
+      "built": "2026-10-21",
+      "centrifugerVersion": "1.2.0-r367",
+      "example": {
+        "url": "example/mockViral.fq.gz",
+        "label": "5,000 simulated 150 bp shotgun reads from 8 human viruses"
+      },
+      "defaultRank": "species"
+    },
+    {
+      "name": "refseq_viral_prot",
+      "title": "NCBI RefSeq viral proteins (including phages)",
+      "description": "All RefSeq viral proteins with NCBI taxonomy, bacteriophages included. Reads are translated and matched at the protein level, which finds viruses too divergent for nucleotide matching. Large: plan for about 1 GB of browser memory.",
+      "taxonomy": "NCBI",
+      "sequences": 722738,
+      "bases": 175001826,
+      "protein": true,
+      "size": 200320999,
+      "gzSize": 114961908,
+      "built": "2026-10-25",
+      "centrifugerVersion": "1.2.0-r367",
+      "example": {
+        "url": "example/mockVirome.fq.gz",
+        "label": "5,000 simulated 150 bp shotgun reads from 8 human viruses and 3 bacteriophages"
+      },
+      "defaultRank": "species"
+    },
+    {
+      "name": "swissprot",
+      "title": "UniProtKB/Swiss-Prot (all domains, protein)",
+      "description": "Curated Swiss-Prot proteins from all domains of life, with NCBI taxonomy. Reads are translated and matched at the protein level. Broad but sparse (mostly well-studied organisms), so calls below phylum or family are reliable only for well-studied taxa. Large: plan for about 1 GB of browser memory.",
+      "taxonomy": "NCBI",
+      "sequences": 575748,
+      "bases": 209017843,
+      "protein": true,
+      "size": 229827621,
+      "gzSize": 138234688,
+      "built": "2026-10-25",
+      "centrifugerVersion": "1.2.0-r367",
+      "example": {
+        "url": "example/mockSwiss.fq.gz",
+        "label": "5,000 simulated 150 bp shotgun reads from 6 bacterial genomes and yeast"
+      },
+      "defaultRank": "genus"
+    }
+  ]
+}

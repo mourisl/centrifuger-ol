@@ -1,0 +1,64 @@
+# Build Centrifuger to WebAssembly, fetch the index parts from the GitHub
+# releases named in each site/index/<name>/manifest.json, test, and deploy
+# site/ to GitHub Pages. Assumes this directory is the repository root.
+name: Build and deploy Centrifuger Web
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 6.0.13
+
+      - name: Install native dependencies
+        run: sudo apt-get update && sudo apt-get install -y zlib1g-dev
+
+      - name: Build WebAssembly and native tools
+        run: make wasm native EMCXX=em++ EMCC=emcc
+
+      - name: Fetch index parts from the releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -I scripts/index_parts.py fetch site
+
+      - name: Parity test against native Centrifuger
+        run: node test/node_parity.mjs
+
+      - name: Check file sizes (GitHub warns above 50 MB per file)
+        run: |
+          find site -type f -size +50M -print -exec false {} +
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
