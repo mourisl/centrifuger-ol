@@ -228,7 +228,6 @@ function startRun() {
     options: {
       k: Number.isFinite(k) && k > 0 ? k : 1,
       minHitLen: Number.isFinite(minHitLen) && minHitLen > 0 ? minHitLen : null,
-      noDust: $('opt-nodust').checked,
     },
   });
 }

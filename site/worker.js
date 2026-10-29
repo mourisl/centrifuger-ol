@@ -3,7 +3,7 @@
 //
 // Messages in:
 //   { type: 'loadIndex', index: name }
-//   { type: 'run', index: name, reads: { r1: File, r2?: File }, options: { k, minHitLen, noDust } }
+//   { type: 'run', index: name, reads: { r1: File, r2?: File }, options: { k, minHitLen } }
 //   { type: 'cleanup' }   (page is closing: delete this tab's result file)
 // Messages out:
 //   { type: 'index', name, state: 'downloading'|'ready', loaded, total, manifest, cached }
@@ -385,7 +385,6 @@ async function run({ index, reads, options }) {
   else args.push('-u', '/in/reads_1');
   if (options.k && options.k > 1) args.push('-k', String(options.k));
   if (options.minHitLen) args.push('--min-hitlen', String(options.minHitLen));
-  if (options.noDust) args.push('--no-dust');
   post({ type: 'progress', stage: 'Classifying reads', fraction: 0 });
   try {
     callMain(cls, args);

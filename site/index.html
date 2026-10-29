@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Centrifuger Web</title>
+  <title>Centrifuger Online</title>
   <meta name="description" content="Taxonomic classification and abundance estimation of sequencing reads with Centrifuger, running entirely in your browser via WebAssembly.">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -11,7 +11,7 @@
   <header class="site-header">
     <div class="wrap">
       <h1>Centrifuger <span class="tag">Web</span></h1>
-      <p class="lede">Classify sequencing reads (16S/18S/ITS amplicons or viral shotgun reads) and estimate taxon abundance with
+      <p class="lede">Classify sequencing reads  and estimate taxon abundance with
         <a href="https://github.com/mourisl/centrifuger" target="_blank" rel="noopener">Centrifuger</a>,
         compiled to WebAssembly. Your files are processed on this computer and are never uploaded.</p>
     </div>
@@ -65,7 +65,6 @@
           <label>Minimum partial hit length (<code>--min-hitlen</code>)
             <input type="number" id="opt-minhit" min="1" placeholder="auto">
           </label>
-          <label class="check"><input type="checkbox" id="opt-nodust"> Disable DUST masking (<code>--no-dust</code>)</label>
         </div>
       </details>
 
@@ -181,6 +180,7 @@
   <footer class="wrap muted small">
     Please cite: Song L, Langmead B. Centrifuger: lossless compression of microbial genomes for efficient and accurate metagenomic sequence classification. <a href="https://doi.org/10.1186/s13059-024-03244-4" target="_blank" rel="noopener"><em>Genome Biol.</em> 25, 106 (2024)</a>.
     References: NCBI RefSeq and Taxonomy, GTDB, and SILVA (CC BY 4.0); see each index's description.
+    This site is created by Claude Code.
   </footer>
 
   <script type="module" src="app.js"></script>
