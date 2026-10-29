@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""Index parts (site/index/<name>/*.part*) are not tracked by git. They are
-stored as assets of GitHub releases; each manifest.json names its release
-("release"), and the Pages workflow fetches the parts at deploy time.
+"""Index files (site/index/<name>/<name>.<i>.cfr) are not tracked by git. They
+are stored as assets of GitHub releases; each manifest.json names its release
+("release"), and the Pages workflow fetches the files at deploy time.
 
 Usage:
-  index_parts.py list   <site> [names...]   print the part paths (for uploading)
-  index_parts.py verify <site> [names...]   check parts against the manifests
-  index_parts.py fetch  <site> [names...]   download missing parts, then verify
+  index_parts.py list   <site> [names...]   print the .cfr paths (for uploading)
+  index_parts.py verify <site> [names...]   check the files against the manifests
+  index_parts.py fetch  <site> [names...]   download missing files, then verify
   index_parts.py set-release <site> <tag> [names...]   record the release tag
 
-fetch downloads https://github.com/<owner>/<repo>/releases/download/<tag>/<part>
+fetch downloads https://github.com/<owner>/<repo>/releases/download/<tag>/<file>
 (public repository; no tools needed). The repository comes from INDEX_REPO,
 GITHUB_REPOSITORY (set in Actions) or `git remote get-url origin`. For a private
 repository it falls back to `gh release download` (needs GH_TOKEN in CI). Set
-LOCAL_ASSET_DIR to copy parts from a local folder instead.
+LOCAL_ASSET_DIR to copy the files from a local folder instead.
 """
 import glob
 import hashlib
@@ -42,26 +42,23 @@ def manifests(site, names):
     return out
 
 
-def parts(path, m):
+def files(path, m):
+    """(manifest entry, local path) for each index file."""
     d = os.path.dirname(path)
-    return [(f, [os.path.join(d, p) for p in f["parts"]]) for f in m["files"]]
+    return [(f, os.path.join(d, f["name"])) for f in m["files"]]
 
 
 def problems(path, m):
     errs = []
-    for f, ps in parts(path, m):
-        absent = [p for p in ps if not os.path.isfile(p)]
-        if absent:
-            errs.append("%s: missing %s" % (f["name"], ", ".join(os.path.basename(p) for p in absent)))
+    for f, p in files(path, m):
+        if not os.path.isfile(p):
+            errs.append("%s: missing" % f["name"])
             continue
         h = hashlib.sha256()
-        size = 0
-        for p in ps:
-            with open(p, "rb") as fp:
-                for block in iter(lambda: fp.read(1 << 20), b""):
-                    h.update(block)
-                    size += len(block)
-        if size != f["gzSize"] or h.hexdigest() != f["sha256"]:
+        with open(p, "rb") as fp:
+            for block in iter(lambda: fp.read(1 << 20), b""):
+                h.update(block)
+        if os.path.getsize(p) != f["size"] or h.hexdigest() != f["sha256"]:
             errs.append("%s: size or sha256 differs from manifest" % f["name"])
     return errs
 
@@ -99,12 +96,11 @@ def download(url, dest):
 
 
 def fetch_release(m, path, tag, repo):
-    """Download the parts of one index from its release (gh only as a fallback)."""
+    """Download the files of one index from its release (gh only as a fallback)."""
     base = "https://github.com/%s/releases/download/%s/" % (repo, tag)
     try:
-        for f, ps in parts(path, m):
-            for p in ps:
-                download(base + os.path.basename(p), p)
+        for f, p in files(path, m):
+            download(base + f["name"], p)
         return
     except urllib.error.HTTPError as e:
         if e.code != 404:
@@ -114,13 +110,12 @@ def fetch_release(m, path, tag, repo):
                      "install gh for private ones)" % (m["name"], e.url.rsplit("/", 1)[-1], tag, repo))
     with tempfile.TemporaryDirectory() as tmp:
         subprocess.run(["gh", "release", "download", tag, "--repo", repo, "--dir", tmp,
-                        "--pattern", m["name"] + ".*.part*"], check=True)
-        for f, ps in parts(path, m):
-            for p in ps:
-                asset = os.path.join(tmp, os.path.basename(p))
-                if not os.path.isfile(asset):
-                    sys.exit("%s: release %s has no asset %s" % (m["name"], tag, os.path.basename(p)))
-                shutil.copyfile(asset, p)
+                        "--pattern", m["name"] + ".*.cfr"], check=True)
+        for f, p in files(path, m):
+            asset = os.path.join(tmp, f["name"])
+            if not os.path.isfile(asset):
+                sys.exit("%s: release %s has no asset %s" % (m["name"], tag, f["name"]))
+            shutil.copyfile(asset, p)
 
 
 def fetch(items):
@@ -130,17 +125,16 @@ def fetch(items):
         if not problems(path, m):
             print("%-20s present" % m["name"])
             continue
-        tag = m.get("release")
         if local:
-            for f, ps in parts(path, m):
-                for p in ps:
-                    asset = os.path.join(local, os.path.basename(p))
-                    if not os.path.isfile(asset):
-                        sys.exit("%s: %s has no asset %s" % (m["name"], local, os.path.basename(p)))
-                    shutil.copyfile(asset, p)
+            for f, p in files(path, m):
+                asset = os.path.join(local, f["name"])
+                if not os.path.isfile(asset):
+                    sys.exit("%s: %s has no asset %s" % (m["name"], local, f["name"]))
+                shutil.copyfile(asset, p)
             continue
+        tag = m.get("release")
         if not tag:
-            sys.exit("%s: manifest has no \"release\"; publish its parts first (see README)" % m["name"])
+            sys.exit("%s: manifest has no \"release\"; publish its files first (see README)" % m["name"])
         print("%-20s downloading from release %s of %s" % (m["name"], tag, repo), flush=True)
         fetch_release(m, path, tag, repo)
     verify(items)
@@ -162,8 +156,7 @@ def main():
     items = manifests(site, sys.argv[3:])
     if cmd == "list":
         for path, m in items:
-            for _, ps in parts(path, m):
-                print("\n".join(ps))
+            print("\n".join(p for _, p in files(path, m)))
     elif cmd == "verify":
         verify(items)
     elif cmd == "fetch":

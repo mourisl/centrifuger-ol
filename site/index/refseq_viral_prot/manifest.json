@@ -13,41 +13,24 @@
   "files": [
     {
       "name": "refseq_viral_prot.1.cfr",
-      "parts": [
-        "refseq_viral_prot.1.cfr.gz.part00",
-        "refseq_viral_prot.1.cfr.gz.part01",
-        "refseq_viral_prot.1.cfr.gz.part02"
-      ],
       "size": 165447314,
-      "gzSize": 109927837,
-      "sha256": "b8e1020613de1db5bca84f90978a4c3408bc1b552734b623b3857a3f5802cb2f"
+      "sha256": "167b9c926692ef993e71a972bc1fecf77531299a7a5f0266cbe0a656f56e3bf5"
     },
     {
       "name": "refseq_viral_prot.2.cfr",
-      "parts": [
-        "refseq_viral_prot.2.cfr.gz.part00"
-      ],
       "size": 23309796,
-      "gzSize": 2191239,
-      "sha256": "169508504b3535217eb1271cf7e1f47301896a5b05dc29eba193b1191b492696"
+      "sha256": "503fdc7a5894949c2a946368e8778e5313c98c40ac1c200051baa53e686b1ebb"
     },
     {
       "name": "refseq_viral_prot.3.cfr",
-      "parts": [
-        "refseq_viral_prot.3.cfr.gz.part00"
-      ],
       "size": 11563792,
-      "gzSize": 2842695,
-      "sha256": "fbb459bdf806c45d6e30ca23526d2baf9a2b195cb75b7418b805725d96e5d7e9"
+      "sha256": "9c2716a883258a9eebfada459e6b1cfad266ed9f770819989b2dc4290382557b"
     },
     {
       "name": "refseq_viral_prot.4.cfr",
-      "parts": [
-        "refseq_viral_prot.4.cfr.gz.part00"
-      ],
       "size": 97,
-      "gzSize": 137,
-      "sha256": "a803ce94941471f7e8c46ee868f0406d9aa6f1c5d67bbd20a7f8542ff915ca65"
+      "sha256": "fccaf2d6fe4e4c51722fc36bc952fffca63fbb0505fa66107a01c45ce6f8304c"
     }
-  ]
+  ],
+  "release": "indices-2026-10-28"
 }

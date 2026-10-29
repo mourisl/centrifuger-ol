@@ -25,8 +25,8 @@ level.
   about 3× more reads in the right genus than the viral genome index.
 - **Cost:** translation makes it slower, about 11–15 s per 100k reads in the
   browser versus about 5 s for nucleotide indices.
-- **Size:** about 200–230 MB uncompressed and 115–138 MB to download. They peak
-  around 0.5 GB of browser memory.
+- **Size:** 200–230 MB to download. They peak around 0.6 GB of browser
+  memory.
 - **Swiss-Prot is sparse:** it is reliable for well-studied organisms only.
   Many reads from poorly studied taxa stay unclassified.
 
@@ -55,8 +55,8 @@ The page downloads only the selected index, when a run starts.
 - `src/wasm_main.cpp` wraps upstream `main()` and adds `--wasm-stdout <path>`,
   which sends results to a file in the in-memory filesystem.
 - `site/worker.js` runs everything in a Web Worker:
-  1. Downloads and gunzips the index (stored in the Cache API). Files and
-     parts load one at a time, so the computer stays responsive.
+  1. Downloads the index's four `.cfr` files, one at a time, so the computer
+     stays responsive, and stores them in the Cache API.
   2. Mounts the user's files with WORKERFS, so they are not copied into memory.
   3. Runs `centrifuger`. Its per-read output is gzip-compressed as it is
      written, using zlib inside the module (`src/wasm_gzip.c`,
@@ -95,8 +95,8 @@ scripts/env.sh              puts ./emsdk on PATH (works around old system Python
 scripts/install_emsdk.sh    installs the pinned emsdk into ./emsdk
 scripts/build_index.sh      downloads sources, builds one index (or all) into site/index/<name>/
 scripts/make_catalog.py     writes site/index/indices.json from the manifests
-scripts/publish_indices.sh  uploads index parts to a GitHub release, records it in the manifests
-scripts/index_parts.py      lists, verifies and fetches index parts (used by the Pages workflow)
+scripts/publish_indices.sh  uploads the index .cfr files to a GitHub release, records it in the manifests
+scripts/index_parts.py      lists, verifies and fetches the index .cfr files (used by the Pages workflow)
 scripts/measure_protein_indices.sh  one-off size measurement of candidate protein indices
 test/node_parity.mjs        wasm vs native byte-for-byte comparison
 test/browser_e2e.py         headless Firefox end-to-end test (selenium)
@@ -131,26 +131,30 @@ python3 -m http.server -d site 8000  # manual check at http://localhost:8000
 
 ## Deploy
 
-`site/` is fully static and hosted on **GitHub Pages**. Index files are split
-into parts of at most 45 MiB, under GitHub's 50 MB per-file warning.
+`site/` is fully static and hosted on **GitHub Pages**. Each index is served as
+its four plain `<name>.<i>.cfr` files, without splitting or compression.
+- The page links to them, so users can download an index and run native
+  `centrifuger -x <folder>/<name>`.
+- Indices total about 760 MB of the 1 GB Pages limit; the workflow fails if
+  `site/` exceeds 1 GB. Keep new indices small.
 
 - Push this directory as a repository root (branch `master`), then set
   Settings → Pages → Source to "GitHub Actions".
-- The workflow builds the wasm, fetches the index parts (see below), runs the
+- The workflow builds the wasm, fetches the index files (see below), runs the
   parity test and deploys.
 
 ### Index files live in GitHub releases, not in git
 
-The index parts (`site/index/<name>/*.part*`, about 480 MB) are ignored by git.
-- They are stored as assets of GitHub releases.
-- Each index's `manifest.json` (tracked) lists its parts with sizes and
-  sha256, and records the release that holds them (`"release"`).
+The `.cfr` files (`site/index/<name>/*.cfr`) are ignored by git.
+- They are stored as assets of GitHub releases, as one flat list of 28 files.
+- Each index's `manifest.json` (tracked) lists its files with sizes and sha256,
+  and records the release that holds them (`"release"`).
 - At deploy time the workflow runs `python3 scripts/index_parts.py fetch site`,
-  which downloads the parts and checks them against the manifests.
+  which downloads the files and checks them against the manifests.
 
 Code releases and ordinary pushes need no index assets. `git push` cannot
 upload release assets, since releases aren't part of git, so after rebuilding
-an index, publish its parts in one of two ways:
+an index, publish its files in one of two ways:
 
 - **On GitHub's web page (no tools):**
   1. Releases → "Draft a new release". Create a tag such as
@@ -165,16 +169,16 @@ an index, publish its parts in one of two ways:
 Then commit `site/index` (the manifests) and push. Indices you didn't rebuild
 keep pointing at their earlier release.
 
-To deploy, the workflow downloads each part from
-`https://github.com/<owner>/<repo>/releases/download/<tag>/<part>`. That needs
+To deploy, the workflow downloads each file from
+`https://github.com/<owner>/<repo>/releases/download/<tag>/<file>`. That needs
 no extra tools for a public repository; a private one falls back to `gh`. On a
-fresh clone, `python3 scripts/index_parts.py fetch site` gets the parts locally
+fresh clone, `python3 scripts/index_parts.py fetch site` gets the files locally
 the same way.
 
-No special headers are needed, so other static hosts work too. Cloudflare
-Pages limits files to 25 MiB, so build with `PART_SIZE=24M` for it.
+No special headers are needed, so other static hosts work too, as long as
+they accept files of up to about 200 MB (Cloudflare Pages, limited to 25 MiB
+per file, does not).
 
 To add an index, add a `recipe_<name>` function to `scripts/build_index.sh`.
-It installs the gzipped files split into parts of 45 MiB or less, plus a
-`manifest.json`, and refreshes `indices.json`, so the new index appears in the
-page's selector.
+It installs the four `.cfr` files plus a `manifest.json`, and refreshes
+`indices.json`, so the new index appears in the page's selector.

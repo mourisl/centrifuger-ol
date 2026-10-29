@@ -53,8 +53,24 @@ function showIndex() {
   if (!ix) return;
   $('index-desc').textContent =
     `${ix.description} ${fmtInt.format(ix.sequences)} ${ix.protein ? 'proteins' : 'sequences'}, ${ix.taxonomy} taxonomy, built ${ix.built} with ` +
-    `Centrifuger ${ix.centrifugerVersion}. Download ${fmtBytes(ix.gzSize)} (cached by your browser after the first run); ` +
-    `needs roughly ${fmtBytes(ix.size * 4)} of memory while running.`;
+    `Centrifuger ${ix.centrifugerVersion}. Download ${fmtBytes(ix.size)} (cached by your browser after the first run); ` +
+    `needs roughly ${fmtBytes(ix.size * 3)} of memory while running.`;
+  // The index files themselves, for use with native Centrifuger.
+  const links = ix.files.map((f) =>
+    Object.assign(document.createElement('a'), {
+      href: `index/${ix.name}/${f.name}`,
+      download: f.name,
+      textContent: `${f.name} (${fmtBytes(f.size)})`,
+    })
+  );
+  const code = Object.assign(document.createElement('code'), { textContent: `centrifuger -x <folder>/${ix.name}` });
+  $('index-files').replaceChildren(
+    'Download the index for native Centrifuger: ',
+    ...links.flatMap((a, i) => (i ? [', ', a] : [a])),
+    '. Keep all four files in one folder and run ',
+    code,
+    '.'
+  );
   const pill = $('index-status');
   pill.textContent = state.loadedIndex === ix.name ? (state.loadedCached ? 'Ready (cached)' : 'Ready') : 'Not loaded';
   pill.classList.toggle('ready', state.loadedIndex === ix.name);
@@ -85,7 +101,7 @@ if (!supported) {
           for (const ix of list) {
             const o = document.createElement('option');
             o.value = ix.name;
-            o.textContent = `${ix.title} (${fmtBytes(ix.gzSize)})`;
+            o.textContent = `${ix.title} (${fmtBytes(ix.size)})`;
             g.appendChild(o);
           }
           return g;

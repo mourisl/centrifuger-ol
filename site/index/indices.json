@@ -10,7 +10,24 @@
       "bases": 40608964,
       "protein": false,
       "size": 29034668,
-      "gzSize": 11998689,
+      "files": [
+        {
+          "name": "refseq16s.1.cfr",
+          "size": 26276374
+        },
+        {
+          "name": "refseq16s.2.cfr",
+          "size": 2309621
+        },
+        {
+          "name": "refseq16s.3.cfr",
+          "size": 448576
+        },
+        {
+          "name": "refseq16s.4.cfr",
+          "size": 97
+        }
+      ],
       "built": "2026-10-21",
       "centrifugerVersion": "1.2.0-r367",
       "example": {
@@ -28,7 +45,24 @@
       "bases": 123176683,
       "protein": false,
       "size": 51686934,
-      "gzSize": 25427850,
+      "files": [
+        {
+          "name": "gtdb_ssu.1.cfr",
+          "size": 40614886
+        },
+        {
+          "name": "gtdb_ssu.2.cfr",
+          "size": 9571631
+        },
+        {
+          "name": "gtdb_ssu.3.cfr",
+          "size": 1500320
+        },
+        {
+          "name": "gtdb_ssu.4.cfr",
+          "size": 97
+        }
+      ],
       "built": "2026-10-21",
       "centrifugerVersion": "1.2.0-r367",
       "example": {
@@ -45,9 +79,26 @@
       "sequences": 510495,
       "bases": 747372381,
       "protein": false,
-      "size": 140708300,
-      "gzSize": 72300683,
-      "built": "2026-10-21",
+      "size": 182259883,
+      "files": [
+        {
+          "name": "silva_ssu.1.cfr",
+          "size": 156937054
+        },
+        {
+          "name": "silva_ssu.2.cfr",
+          "size": 17154812
+        },
+        {
+          "name": "silva_ssu.3.cfr",
+          "size": 8167920
+        },
+        {
+          "name": "silva_ssu.4.cfr",
+          "size": 97
+        }
+      ],
+      "built": "2026-10-29",
       "centrifugerVersion": "1.2.0-r367",
       "example": {
         "url": "example/mock16s.fq.gz",
@@ -64,7 +115,24 @@
       "bases": 29800866,
       "protein": false,
       "size": 28536600,
-      "gzSize": 12414617,
+      "files": [
+        {
+          "name": "refseq_fungi.1.cfr",
+          "size": 25430614
+        },
+        {
+          "name": "refseq_fungi.2.cfr",
+          "size": 2508881
+        },
+        {
+          "name": "refseq_fungi.3.cfr",
+          "size": 597008
+        },
+        {
+          "name": "refseq_fungi.4.cfr",
+          "size": 97
+        }
+      ],
       "built": "2026-10-21",
       "centrifugerVersion": "1.2.0-r367",
       "example": {
@@ -81,9 +149,26 @@
       "sequences": 13052,
       "bases": 184328519,
       "protein": false,
-      "size": 78412131,
-      "gzSize": 61794441,
-      "built": "2026-10-21",
+      "size": 83229587,
+      "files": [
+        {
+          "name": "refseq_viral.1.cfr",
+          "size": 81684434
+        },
+        {
+          "name": "refseq_viral.2.cfr",
+          "size": 1336224
+        },
+        {
+          "name": "refseq_viral.3.cfr",
+          "size": 208832
+        },
+        {
+          "name": "refseq_viral.4.cfr",
+          "size": 97
+        }
+      ],
+      "built": "2026-10-29",
       "centrifugerVersion": "1.2.0-r367",
       "example": {
         "url": "example/mockViral.fq.gz",
@@ -100,7 +185,24 @@
       "bases": 175001826,
       "protein": true,
       "size": 200320999,
-      "gzSize": 114961908,
+      "files": [
+        {
+          "name": "refseq_viral_prot.1.cfr",
+          "size": 165447314
+        },
+        {
+          "name": "refseq_viral_prot.2.cfr",
+          "size": 23309796
+        },
+        {
+          "name": "refseq_viral_prot.3.cfr",
+          "size": 11563792
+        },
+        {
+          "name": "refseq_viral_prot.4.cfr",
+          "size": 97
+        }
+      ],
       "built": "2026-10-25",
       "centrifugerVersion": "1.2.0-r367",
       "example": {
@@ -118,7 +220,24 @@
       "bases": 209017843,
       "protein": true,
       "size": 229827621,
-      "gzSize": 138234688,
+      "files": [
+        {
+          "name": "swissprot.1.cfr",
+          "size": 198338062
+        },
+        {
+          "name": "swissprot.2.cfr",
+          "size": 22277606
+        },
+        {
+          "name": "swissprot.3.cfr",
+          "size": 9211856
+        },
+        {
+          "name": "swissprot.4.cfr",
+          "size": 97
+        }
+      ],
       "built": "2026-10-25",
       "centrifugerVersion": "1.2.0-r367",
       "example": {

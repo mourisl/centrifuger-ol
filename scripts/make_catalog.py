@@ -43,7 +43,7 @@ def main():
             "bases": m.get("bases"),
             "protein": m.get("protein", False),
             "size": sum(f["size"] for f in m["files"]),
-            "gzSize": sum(f["gzSize"] for f in m["files"]),
+            "files": [{"name": f["name"], "size": f["size"]} for f in m["files"]],
             "built": m["built"],
             "centrifugerVersion": m["centrifugerVersion"],
             "example": EXAMPLES.get(m.get("example")),

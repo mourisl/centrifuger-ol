@@ -22,14 +22,14 @@ import createCentrifuger from './wasm/centrifuger.js';
 import createCentrifugerQuant from './wasm/centrifuger-quant.js';
 import { mkOutputDevice, gzipper } from './output.js';
 
-const CACHE_NAME = 'centrifuger-index-v3'; // v3: 45 MiB parts (same names as the older 24 MiB parts)
+const CACHE_NAME = 'centrifuger-index-v4'; // v4: plain .cfr files
 const RESULT_DIR = 'centrifuger-results'; // OPFS directory for classification output
 const GZIP_LEVEL = 6;
-const OLD_CACHES = ['centrifuger-index-v1', 'centrifuger-index-v2'];
+const OLD_CACHES = ['centrifuger-index-v1', 'centrifuger-index-v2', 'centrifuger-index-v3'];
 
 // Only the most recently selected index is kept in memory.
 let manifest = null; // manifest of the loaded index
-let indexFiles = null; // Map name -> Uint8Array (decompressed .cfr)
+let indexFiles = null; // Map name -> Uint8Array (.cfr contents)
 let indexPromise = null;
 let loadingName = null;
 const compiled = {}; // wasm URL -> Promise<WebAssembly.Module>
@@ -47,7 +47,7 @@ async function openCache() {
   }
 }
 
-// Drop cached parts of this index that belong to other versions.
+// Drop cached files of this index that belong to other versions.
 async function pruneCache(dirUrl, keepUrls) {
   const cache = await openCache();
   if (!cache) return;
@@ -56,7 +56,8 @@ async function pruneCache(dirUrl, keepUrls) {
   }
 }
 
-async function fetchBytes(url, onProgress) {
+// Reads a file of known size into one buffer, from the cache or the network.
+async function fetchBytes(url, size, onProgress) {
   const cache = await openCache();
   let res = cache ? await cache.match(url) : undefined;
   const cached = !!res;
@@ -72,40 +73,18 @@ async function fetchBytes(url, onProgress) {
     }
   }
   const reader = res.body.getReader();
-  const chunks = [];
+  const out = new Uint8Array(size);
   let loaded = 0;
   for (;;) {
     const { done, value } = await reader.read();
     if (done) break;
-    chunks.push(value);
+    if (loaded + value.length > size) throw new Error(`${url} is larger than its manifest says`);
+    out.set(value, loaded);
     loaded += value.length;
     onProgress(loaded, cached);
   }
-  const out = new Uint8Array(loaded);
-  let off = 0;
-  for (const c of chunks) {
-    out.set(c, off);
-    off += c.length;
-  }
+  if (loaded !== size) throw new Error(`${url} is incomplete (${loaded} of ${size} bytes)`);
   return { bytes: out, cached };
-}
-
-async function gunzipIfNeeded(bytes) {
-  // Some hosts transparently decode .gz responses; only inflate real gzip data.
-  if (bytes.length < 2 || bytes[0] !== 0x1f || bytes[1] !== 0x8b) return bytes;
-  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  return new Uint8Array(await new Response(stream).arrayBuffer());
-}
-
-function concat(chunks) {
-  if (chunks.length === 1) return chunks[0];
-  const out = new Uint8Array(chunks.reduce((n, c) => n + c.length, 0));
-  let off = 0;
-  for (const c of chunks) {
-    out.set(c, off);
-    off += c.length;
-  }
-  return out;
 }
 
 function loadIndex(name) {
@@ -118,7 +97,7 @@ function loadIndex(name) {
     const mres = await fetch(new URL('manifest.json', dir), { cache: 'no-cache' });
     if (!mres.ok) throw new Error(`Cannot load the manifest of index "${name}" (HTTP ${mres.status})`);
     const m = await mres.json();
-    const total = m.files.reduce((s, f) => s + f.gzSize, 0);
+    const total = m.files.reduce((s, f) => s + f.size, 0);
     const loadedPer = {};
     let allCached = true;
     const report = () =>
@@ -126,20 +105,16 @@ function loadIndex(name) {
     report();
     const urls = new Set();
     const files = new Map();
-    // One file and one part at a time, so loading stays light on the computer.
+    // One file at a time, so loading stays light on the computer.
     for (const f of m.files) {
-      const chunks = [];
-      for (const part of f.parts || [f.url]) {
-        const url = new URL(part, dir).href + '?v=' + f.sha256.slice(0, 12);
-        urls.add(url);
-        const { bytes, cached } = await fetchBytes(url, (n) => {
-          loadedPer[url] = n;
-          report();
-        });
-        if (!cached) allCached = false;
-        chunks.push(bytes);
-      }
-      files.set(f.name, await gunzipIfNeeded(concat(chunks)));
+      const url = new URL(f.name, dir).href + '?v=' + f.sha256.slice(0, 12);
+      urls.add(url);
+      const { bytes, cached } = await fetchBytes(url, f.size, (n) => {
+        loadedPer[url] = n;
+        report();
+      });
+      if (!cached) allCached = false;
+      files.set(f.name, bytes);
     }
     pruneCache(dir.href, urls).catch(() => {});
     if (loadingName !== name) return; // another index was selected meanwhile

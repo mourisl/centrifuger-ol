@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # Build one of the website's prebuilt Centrifuger indices and install it into
-# site/index/<name>/ (gzip-compressed, split into <= 45 MiB parts, under GitHub's
-# 50 MB file warning; use PART_SIZE=24M for Cloudflare Pages), then refresh
-# site/index/indices.json.
+# site/index/<name>/ as the four plain <name>.<i>.cfr files (no compression, so
+# users can download and use them with native Centrifuger) plus manifest.json,
+# then refresh site/index/indices.json. The .cfr files are published as GitHub
+# release assets (scripts/publish_indices.sh), not committed.
 #
 #   bash scripts/build_index.sh <name> [threads]
 #   bash scripts/build_index.sh all [threads]
 #
 # Names: refseq16s, refseq_fungi, gtdb_ssu, silva_ssu, refseq_viral,
 #        refseq_viral_prot, swissprot (protein indices)
-# Requires: curl, gzip, awk, sha256sum, split, python3, and `make native`.
+# Requires: curl, gzip, awk, sha256sum, python3, and `make native`.
 set -euo pipefail
 
 NAME=${1:?usage: build_index.sh <name|all> [threads]}
@@ -20,7 +21,6 @@ NCBI=https://ftp.ncbi.nlm.nih.gov
 GTDB=https://data.gtdb.ecogenomic.org/releases/release232/232.0
 SILVA_VER=138.2
 SILVA=https://www.arb-silva.de/fileadmin/silva_databases/release_${SILVA_VER//./_}/Exports
-PART_SIZE=${PART_SIZE:-45M}
 UNIPROT=https://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete
 
 [ -x "$BUILD" ] || { echo "Run 'make native' first." >&2; exit 1; }
@@ -117,7 +117,7 @@ recipe_gtdb_ssu() {
 recipe_silva_ssu() {
   TITLE="SILVA ${SILVA_VER} SSU Ref NR99"
   DESC="SILVA ${SILVA_VER} small-subunit rRNA (16S/18S) non-redundant reference with SILVA taxonomy (resolves to genus). For 16S/18S amplicon reads across all domains."
-  TAXONOMY="SILVA ${SILVA_VER}"; OFFRATE=7; EXAMPLE="mock16s"
+  TAXONOMY="SILVA ${SILVA_VER}"; OFFRATE=5; EXAMPLE="mock16s"
   fetch "$SILVA/taxonomy/tax_slv_ssu_${SILVA_VER}.txt.gz" tax_slv_ssu.txt.gz
   fetch "$SILVA/taxonomy/tax_slv_ssu_${SILVA_VER}.acc_taxid.gz" tax_slv_ssu.acc_taxid.gz
   fetch "$SILVA/SILVA_${SILVA_VER}_SSURef_NR99_tax_silva.fasta.gz" silva_nr99.fasta.gz
@@ -144,7 +144,7 @@ recipe_silva_ssu() {
 recipe_refseq_viral() {
   TITLE="NCBI RefSeq viral genomes (excluding phages)"
   DESC="RefSeq viral genomes with NCBI taxonomy, excluding bacteriophages (Caudoviricetes and sequences named phage). For shotgun reads from eukaryotic viruses."
-  TAXONOMY="NCBI"; OFFRATE=6; EXAMPLE="mockViral"
+  TAXONOMY="NCBI"; OFFRATE=5; EXAMPLE="mockViral"
   ncbi_taxonomy
   fetch "$NCBI/refseq/release/viral/viral.1.1.genomic.fna.gz" viral.fna.gz
   fetch "$NCBI/refseq/release/viral/viral.1.genomic.gbff.gz" viral.gbff.gz
@@ -212,14 +212,11 @@ rm -rf "$OUT"
 mkdir -p "$OUT"
 files_json=""
 for i in 1 2 3 4; do
-  gzip -9 -c "$NAME.$i.cfr" > "$NAME.$i.cfr.gz"
+  cp "$NAME.$i.cfr" "$OUT/"
   size=$(stat -c %s "$NAME.$i.cfr")
-  gzsize=$(stat -c %s "$NAME.$i.cfr.gz")
-  sha=$(sha256sum "$NAME.$i.cfr.gz" | cut -d' ' -f1)
-  split -b "$PART_SIZE" -d -a 2 "$NAME.$i.cfr.gz" "$OUT/$NAME.$i.cfr.gz.part"
-  parts=$(cd "$OUT" && ls "$NAME.$i.cfr.gz.part"* | awk '{ printf "%s\"%s\"", (NR > 1 ? ", " : ""), $0 }')
+  sha=$(sha256sum "$NAME.$i.cfr" | cut -d' ' -f1)
   files_json="$files_json${files_json:+,}
-    {\"name\": \"$NAME.$i.cfr\", \"parts\": [$parts], \"size\": $size, \"gzSize\": $gzsize, \"sha256\": \"$sha\"}"
+    {\"name\": \"$NAME.$i.cfr\", \"size\": $size, \"sha256\": \"$sha\"}"
 done
 version=$(awk '$1 == "version" { print $2 }' "$NAME.4.cfr")
 cat > "$OUT/manifest.json" <<JSON

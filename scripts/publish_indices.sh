@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Upload index parts as assets of a GitHub release (they are not tracked by
+# Upload the index .cfr files as assets of a GitHub release (they are not tracked by
 # git), and record the release tag in each index's manifest.json. Commit the
-# manifests afterwards; the Pages workflow downloads the parts at deploy time.
+# manifests afterwards; the Pages workflow downloads the files at deploy time.
 # Only rebuilt indices need publishing; the others keep their release.
 #
 #   bash scripts/publish_indices.sh [-t tag] [names...]
@@ -26,9 +26,9 @@ python3 -I scripts/index_parts.py verify site "$@"
 
 if ! gh release view "$TAG" >/dev/null 2>&1; then
   gh release create "$TAG" --prerelease --title "Index files $TAG" \
-    --notes "Index files for the web site (not a code release). Each site/index/<name>/manifest.json names the release holding its parts; the Pages workflow downloads them at deploy time."
+    --notes "Index files for the web site (not a code release). Each site/index/<name>/manifest.json names the release holding its .cfr files; the Pages workflow downloads them at deploy time."
 fi
 mapfile -t FILES < <(python3 -I scripts/index_parts.py list site "$@")
 gh release upload "$TAG" "${FILES[@]}" --clobber
 python3 -I scripts/index_parts.py set-release site "$TAG" "$@"
-echo "Uploaded ${#FILES[@]} parts to $TAG. Now commit site/index/*/manifest.json and push."
+echo "Uploaded ${#FILES[@]} files to $TAG. Now commit site/index/*/manifest.json and push."

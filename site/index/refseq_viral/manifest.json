@@ -5,47 +5,32 @@
   "taxonomy": "NCBI",
   "sequences": 13052,
   "bases": 184328519,
-  "offrate": 6,
+  "offrate": 5,
+  "protein": false,
   "example": "mockViral",
   "centrifugerVersion": "1.2.0-r367",
-  "built": "2026-10-21",
+  "built": "2026-10-29",
   "files": [
     {
       "name": "refseq_viral.1.cfr",
-      "parts": [
-        "refseq_viral.1.cfr.gz.part00",
-        "refseq_viral.1.cfr.gz.part01"
-      ],
-      "size": 76866978,
-      "gzSize": 61465163,
-      "sha256": "5c3d91010a095913f784aedce3cf20855b22df101cf495ec72a0e60efb99ef53"
+      "size": 81684434,
+      "sha256": "2bb931e6459536cf62d8d2c06bfb6093914eddf048f68486b4f04755ad55a0a0"
     },
     {
       "name": "refseq_viral.2.cfr",
-      "parts": [
-        "refseq_viral.2.cfr.gz.part00"
-      ],
       "size": 1336224,
-      "gzSize": 268178,
-      "sha256": "fc6eab1919a6224d5f8d2ec20f781f35e95edc43d920f9a7fc4355397c7a0569"
+      "sha256": "ed6eb0404cab99bf604c4543cac72e27747cfde98ddde05dbb986367be7c4e6b"
     },
     {
       "name": "refseq_viral.3.cfr",
-      "parts": [
-        "refseq_viral.3.cfr.gz.part00"
-      ],
       "size": 208832,
-      "gzSize": 60968,
-      "sha256": "d70da62bb44ce9c191e83e75d5cdb2f8635f362c9664cf833caaac6ca258ee09"
+      "sha256": "926d3eafaa1a5184818a9967a3800e05dfc6412c0d973274f1ae584a7c6a2c3b"
     },
     {
       "name": "refseq_viral.4.cfr",
-      "parts": [
-        "refseq_viral.4.cfr.gz.part00"
-      ],
       "size": 97,
-      "gzSize": 132,
-      "sha256": "c5f37c08c42277dce21cd064790db89ee5e21d0305a4a06530f0249730bacb31"
+      "sha256": "501d77a13a5cb5436b8bc6b38ed15a55495be1eec74f2e096b3c99c145323195"
     }
-  ]
+  ],
+  "release": "indices-2026-10-28"
 }

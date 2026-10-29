@@ -12,39 +12,24 @@
   "files": [
     {
       "name": "gtdb_ssu.1.cfr",
-      "parts": [
-        "gtdb_ssu.1.cfr.gz.part00"
-      ],
       "size": 40614886,
-      "gzSize": 22842726,
-      "sha256": "d18a2fa7e453644d1e9458840bac73f18d0ccc98b6408dfcc2a1495e7e24eb79"
+      "sha256": "77f94810c3e26f7d5cc146e0b347e343a478185ff3a9462a7393e4f91fab9113"
     },
     {
       "name": "gtdb_ssu.2.cfr",
-      "parts": [
-        "gtdb_ssu.2.cfr.gz.part00"
-      ],
       "size": 9571631,
-      "gzSize": 2217251,
-      "sha256": "d3225c76c9e44d254d0be9be08c44af9f731dc7055a6201ed75e3c03069f0777"
+      "sha256": "9cd50cf5ea1d7326fa443aaee554ecec181afe666adbf9b7a81c05bcc90eda5c"
     },
     {
       "name": "gtdb_ssu.3.cfr",
-      "parts": [
-        "gtdb_ssu.3.cfr.gz.part00"
-      ],
       "size": 1500320,
-      "gzSize": 367745,
-      "sha256": "2dc15a787eb942418e5943ce58ce3c10deb9f5a2dc1f8b7b6ddd4e808ef37654"
+      "sha256": "56b2cb1bea9be7044c03c1abf0c3cb25941b52f046059c64307d384ed5ff19e4"
     },
     {
       "name": "gtdb_ssu.4.cfr",
-      "parts": [
-        "gtdb_ssu.4.cfr.gz.part00"
-      ],
       "size": 97,
-      "gzSize": 128,
-      "sha256": "0ce37271b62e25e0dc9babd955fc901dec058df982c4de139232fb76109d834a"
+      "sha256": "5817165f259f166bfa3749f1b1b3be5a2437dd045be7a9cb01050bbb9c5b3e6b"
     }
-  ]
+  ],
+  "release": "indices-2026-10-28"
 }

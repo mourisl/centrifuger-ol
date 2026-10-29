@@ -12,39 +12,24 @@
   "files": [
     {
       "name": "refseq_fungi.1.cfr",
-      "parts": [
-        "refseq_fungi.1.cfr.gz.part00"
-      ],
       "size": 25430614,
-      "gzSize": 11720702,
-      "sha256": "b0d48984159fcfaa90869a4c303ed5d4fb6649ad1cf38ff8059feeed13d2c188"
+      "sha256": "0eb699dd69ce02ac6ac2b1c8c15296bebc42bce6b98482808e534e107a561f33"
     },
     {
       "name": "refseq_fungi.2.cfr",
-      "parts": [
-        "refseq_fungi.2.cfr.gz.part00"
-      ],
       "size": 2508881,
-      "gzSize": 547658,
-      "sha256": "ac206869c97e1f8ff7014f881d148422c94df03debb668697706d31600fbebbf"
+      "sha256": "be0567b3a25fa6d74f072ef8fe4516d1a0e945372f97844216d02640193237d9"
     },
     {
       "name": "refseq_fungi.3.cfr",
-      "parts": [
-        "refseq_fungi.3.cfr.gz.part00"
-      ],
       "size": 597008,
-      "gzSize": 146125,
-      "sha256": "d00cf0db6af4a36a68ecc8b5b7983ccb06492ad5bd49f1ed3ca4b6da718cb317"
+      "sha256": "ce46abb5531ea877b7e498c4ebaeac4685a3815e9f686e8ef0e16fc07a32797c"
     },
     {
       "name": "refseq_fungi.4.cfr",
-      "parts": [
-        "refseq_fungi.4.cfr.gz.part00"
-      ],
       "size": 97,
-      "gzSize": 132,
-      "sha256": "3f8d38a588de32dde79f8e6e4eb4c3fbb84569c76798ddbec0e67b4e459aed36"
+      "sha256": "250173f61e2993af0803698003471e6337814870d08f3f36319b5b81bf50fcc2"
     }
-  ]
+  ],
+  "release": "indices-2026-10-28"
 }

@@ -13,6 +13,7 @@ import subprocess
 import sys
 import threading
 import time
+import urllib.request
 
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
@@ -57,13 +58,6 @@ class QuietHandler(http.server.SimpleHTTPRequestHandler):
 
     def log_message(self, *args):
         pass
-
-    def end_headers(self):
-        # E2E_GZIP_ENCODING=1 imitates hosts that serve .gz files with
-        # Content-Encoding: gzip, so the browser hands over decoded bytes.
-        if os.environ.get("E2E_GZIP_ENCODING") and self.path.split("?")[0].endswith(".cfr.gz"):
-            self.send_header("Content-Encoding", "gzip")
-        super().end_headers()
 
 
 def runs_done(driver):
@@ -120,6 +114,13 @@ def main():
         print("sankey: %d nodes, columns %s" % (sk_nodes, ", ".join(ranks)))
         assert ranks == ["Domain", "Phylum", "Class", "Order", "Family", "Genus", "Species"], ranks
         assert sk_nodes > 20 and driver.find_elements(By.CSS_SELECTOR, "#sankey .sk-link")
+        # The index files can be downloaded for native Centrifuger.
+        links = driver.find_elements(By.CSS_SELECTOR, "#index-files a")
+        assert len(links) == 4, "expected 4 index file links, got %d" % len(links)
+        href = links[3].get_attribute("href")
+        with urllib.request.urlopen(href) as r, open(os.path.join(SITE, "index", "refseq16s", "refseq16s.4.cfr"), "rb") as fp:
+            assert r.read() == fp.read(), "downloaded index file differs"
+        print("index files: %d download links; %s matches the site copy" % (len(links), href.rsplit("/", 1)[-1]))
         if SHOTS:
             driver.save_screenshot(os.path.join(SHOTS, "example.png"))
 

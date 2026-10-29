@@ -45,9 +45,11 @@ jobs:
       - name: Parity test against native Centrifuger
         run: node test/node_parity.mjs
 
-      - name: Check file sizes (GitHub warns above 50 MB per file)
+      - name: Check the site size (GitHub Pages sites are limited to 1 GB)
         run: |
-          find site -type f -size +50M -print -exec false {} +
+          size=$(du -sb site | cut -f1)
+          echo "site/ is $size bytes"
+          [ "$size" -lt 1000000000 ]
 
       - uses: actions/upload-pages-artifact@v3
         with:

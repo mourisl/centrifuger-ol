@@ -5,47 +5,32 @@
   "taxonomy": "SILVA 138.2",
   "sequences": 510495,
   "bases": 747372381,
-  "offrate": 7,
+  "offrate": 5,
+  "protein": false,
   "example": "mock16s",
   "centrifugerVersion": "1.2.0-r367",
-  "built": "2026-10-21",
+  "built": "2026-10-29",
   "files": [
     {
       "name": "silva_ssu.1.cfr",
-      "parts": [
-        "silva_ssu.1.cfr.gz.part00",
-        "silva_ssu.1.cfr.gz.part01"
-      ],
-      "size": 115385470,
-      "gzSize": 66996544,
-      "sha256": "c5c32355981db32da24b6d4bd88e607996b1cd0511464d2f8168dade3137c3cb"
+      "size": 156937054,
+      "sha256": "8975f68c8536607e8e5eca5691949cd520c8b79f9c3a34b7439d6915fdfae235"
     },
     {
       "name": "silva_ssu.2.cfr",
-      "parts": [
-        "silva_ssu.2.cfr.gz.part00"
-      ],
       "size": 17154812,
-      "gzSize": 3512486,
-      "sha256": "bd48f4e6926938b18051e25094d4323dbb222c1d678a8ed4998464397f00efdf"
+      "sha256": "d115f5d7175e6ed69b099bed91edc21e59b07d68e679ee8accda02e331e4f7fa"
     },
     {
       "name": "silva_ssu.3.cfr",
-      "parts": [
-        "silva_ssu.3.cfr.gz.part00"
-      ],
       "size": 8167920,
-      "gzSize": 1791521,
-      "sha256": "87980a1612916be5645d8c0020a6d2f448168d07b31153f501b696d09c627357"
+      "sha256": "c38fe2a629324471df868d141a2a718025373a16799b0d6eaf74aed544909694"
     },
     {
       "name": "silva_ssu.4.cfr",
-      "parts": [
-        "silva_ssu.4.cfr.gz.part00"
-      ],
-      "size": 98,
-      "gzSize": 132,
-      "sha256": "88a7984474dbc67abfe98f7d26f8aca867984bab0655fe0ae9b2ced61c752c82"
+      "size": 97,
+      "sha256": "5fd81d6a888b7720e5012c423a34e55ac11111f2fdac36276888dd4f42debd19"
     }
-  ]
+  ],
+  "release": "indices-2026-10-28"
 }

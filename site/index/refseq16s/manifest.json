@@ -12,39 +12,24 @@
   "files": [
     {
       "name": "refseq16s.1.cfr",
-      "parts": [
-        "refseq16s.1.cfr.gz.part00"
-      ],
       "size": 26276374,
-      "gzSize": 11366386,
-      "sha256": "0e7ee3e419fa575f094d0c816b3a343e3846fc427375b83002311fb0e6f7531f"
+      "sha256": "714e49db3e2c46b9c85ec7517a3a33c4e7b34b3cbe7bc4d471432b5dc07eb2c6"
     },
     {
       "name": "refseq16s.2.cfr",
-      "parts": [
-        "refseq16s.2.cfr.gz.part00"
-      ],
       "size": 2309621,
-      "gzSize": 528732,
-      "sha256": "8fb1babc9af8e8ddc2876f5a5be91c30f7c2ad578856806ca664517567f341af"
+      "sha256": "ac1d9927f6d8891ba03b1815152d61eb37c5ef1b4c1b2ca4859bb66d8a698cd9"
     },
     {
       "name": "refseq16s.3.cfr",
-      "parts": [
-        "refseq16s.3.cfr.gz.part00"
-      ],
       "size": 448576,
-      "gzSize": 103443,
-      "sha256": "7c2cf55c4c91ee7e95edb8aada48957adb55ba8194eae5fac35fd791f90534d0"
+      "sha256": "b2c61433f37e49eb303eb234cdd34d39f9d482a8c8581d0104beca667db99713"
     },
     {
       "name": "refseq16s.4.cfr",
-      "parts": [
-        "refseq16s.4.cfr.gz.part00"
-      ],
       "size": 97,
-      "gzSize": 128,
-      "sha256": "f9c86cfc3414d0977478fb316e938deca61275b984ee717a7aec2df4dfb58ba3"
+      "sha256": "dde045aa398e4ac93bb6d1e6eed3104e25b2e3477ed81bc73a4560d7f7ea5f77"
     }
-  ]
+  ],
+  "release": "indices-2026-10-28"
 }

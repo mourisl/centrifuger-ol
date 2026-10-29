@@ -13,41 +13,24 @@
   "files": [
     {
       "name": "swissprot.1.cfr",
-      "parts": [
-        "swissprot.1.cfr.gz.part00",
-        "swissprot.1.cfr.gz.part01",
-        "swissprot.1.cfr.gz.part02"
-      ],
       "size": 198338062,
-      "gzSize": 131075354,
-      "sha256": "df87a58b19e3fab91345ffc815f4f52dae619a4cb63220cd0a15cded59676287"
+      "sha256": "e6e355add62fc1d878987cab2ba5489603b8140f63b31efdd0d42e4201ddc4c6"
     },
     {
       "name": "swissprot.2.cfr",
-      "parts": [
-        "swissprot.2.cfr.gz.part00"
-      ],
       "size": 22277606,
-      "gzSize": 5304167,
-      "sha256": "3cf22b6698be9f26f33d7100c55cdb31a957ace380b3cb988fa5d8f91c4b7a3a"
+      "sha256": "9314bdc9f785addb1f79b6682381e4f7566bc89232df7d54b281942e029590a9"
     },
     {
       "name": "swissprot.3.cfr",
-      "parts": [
-        "swissprot.3.cfr.gz.part00"
-      ],
       "size": 9211856,
-      "gzSize": 1855038,
-      "sha256": "31dbe36ab4f8feb5df8153631df1a72624bcc68f946db1619040025c8653d551"
+      "sha256": "52b96208b3aa49fdb4b17300f2653905956d281689f54372d7c65be7433cad05"
     },
     {
       "name": "swissprot.4.cfr",
-      "parts": [
-        "swissprot.4.cfr.gz.part00"
-      ],
       "size": 97,
-      "gzSize": 129,
-      "sha256": "fba3758adb2509990033fe60a60e4bbe14aeddc74352fc34d633d209542ac665"
+      "sha256": "3717617bf5e126f4aac37b4bbde93bff785b36883102163522536270b493c194"
     }
-  ]
+  ],
+  "release": "indices-2026-10-28"
 }

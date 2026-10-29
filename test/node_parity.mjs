@@ -81,7 +81,7 @@ for (const [mode, readArgs] of [['paired', ['-1', '/data/example_1.fq', '-2', '/
     compare(`${mode}_quant_fmt${fmt}.tsv`, q, nq);
   }
 }
-// Every prebuilt website index (gzip parts, as served) on its example reads.
+// Every prebuilt website index (the .cfr files as served) on its example reads.
 // PARITY_SITE points at another site directory, e.g. a staging build.
 const siteDir = process.env.PARITY_SITE ? resolve(process.env.PARITY_SITE) : join(root, 'site');
 const catalogPath = join(siteDir, 'index/indices.json');
@@ -93,15 +93,8 @@ if (existsSync(catalogPath)) {
     if (!entry.example) continue;
     const dir = join(siteDir, 'index', entry.name);
     const manifest = JSON.parse(readFileSync(join(dir, 'manifest.json'), 'utf8'));
-    const idxDir = join(workDir, 'site_index', entry.name);
-    mkdirSync(idxDir, { recursive: true });
-    const files = manifest.files.map((f) => {
-      const p = join(idxDir, f.name);
-      const gz = Buffer.concat((f.parts || [f.url]).map((part) => readFileSync(join(dir, part))));
-      writeFileSync(p, gunzipSync(gz));
-      return p;
-    });
-    const prefix = join(idxDir, manifest.name);
+    const files = manifest.files.map((f) => join(dir, f.name));
+    const prefix = join(dir, manifest.name);
     const reads = join(siteDir, entry.example.url);
     const t0 = Date.now();
     const cls = await runWasm(createCentrifuger, [...files, reads],
