@@ -166,6 +166,34 @@ def main():
         assert names == opfs["names"], "expected only the open tab's result, got %s" % names
         print("second tab: stale file removed, open tab's result kept")
 
+        # Your own index: the example index built by native centrifuger-build
+        # (node test/node_parity.mjs writes it to build/example/ex.*.cfr).
+        own = [os.path.join(ROOT, "build", "example", "ex.%d.cfr" % i) for i in (1, 2, 3, 4)]
+        if all(os.path.exists(p) for p in own):
+            Select(driver.find_element(By.ID, "index-select")).select_by_value("__custom__")
+            pick = driver.find_element(By.ID, "custom-files")
+            pick.send_keys("\n".join(own[:3]))
+            msg = driver.find_element(By.ID, "custom-msg").text
+            assert "Missing ex.4.cfr" in msg and not driver.find_element(By.ID, "run").is_enabled(), msg
+            driver.execute_script("arguments[0].value = ''", pick)
+            pick.send_keys("\n".join(own))
+            print("own index:", driver.find_element(By.ID, "custom-msg").text)
+            before = runs_done(driver)
+            WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "run"))).click()
+            wait_done(driver, before)
+            assert driver.find_element(By.ID, "st-reads").text == "100"
+            got = driver.execute_async_script(READ_OPFS)["text"]
+            native = subprocess.run([NATIVE, "-x", os.path.join(ROOT, "build", "example", "ex"), "-t", "1",
+                                     "-1", os.path.join(ex, "example_1.fq"), "-2", os.path.join(ex, "example_2.fq")],
+                                    capture_output=True, text=True, check=True).stdout
+            assert got == native, "own-index classification differs from native"
+            print("own index: classified=%s; matches native (%d lines)" % (
+                driver.find_element(By.ID, "st-class").text, native.count("\n")))
+            # Back to the default index for the steps below (the choice is remembered).
+            Select(driver.find_element(By.ID, "index-select")).select_by_value("refseq16s")
+        else:
+            print("own index: skipped (run node test/node_parity.mjs first to build build/example)")
+
         # 3. Reload: the index must now come from the browser cache, and the
         # result file of the page that was left must be gone.
         driver.get(url)

@@ -100,6 +100,10 @@ code { font-family: var(--mono); font-size: 0.9em; }
 }
 .pill.ready { color: var(--accent); border-color: var(--accent); }
 #index-select { width: 100%; max-width: 560px; margin: 4px 0 8px; }
+.custom-index label { display: flex; flex-direction: column; gap: 6px; font-size: 0.9rem; max-width: 560px; }
+.custom-index input[type="file"] { font: inherit; color: var(--text); }
+#custom-msg { margin: 6px 0 0; color: var(--muted); }
+#custom-msg.bad { color: var(--error-text); }
 
 .notice { padding: 10px 14px; border-radius: 8px; margin: 12px 0; }
 .notice.error { background: var(--error-bg); color: var(--error-text); }

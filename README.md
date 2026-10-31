@@ -73,6 +73,19 @@ The page downloads only the selected index, when a run starts.
      CAMI-II, Kraken2-style), reading the gzipped classification file from
      disk.
 
+## Using your own index
+
+Choose "Use index files from this computer…" in the index selector and pick the
+four files `<name>.1.cfr` … `<name>.4.cfr` from one `centrifuger-build` run.
+- The files are read in place with WORKERFS: they are never uploaded, copied
+  or cached.
+- Indices built by native 64-bit `centrifuger-build`, nucleotide or protein,
+  work as they are.
+- Practical limit: about 2 GB of index files, since WebAssembly memory is capped
+  at 8 GB. The page warns above that size. Large server indices such as RefSeq
+  or nr don't fit.
+- The files have to be picked again after a page reload.
+
 ## Results view
 
 - **Summary:** read counts, the classified fraction and the run time.

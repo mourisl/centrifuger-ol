@@ -3,7 +3,8 @@
 //
 // Messages in:
 //   { type: 'loadIndex', index: name }
-//   { type: 'run', index: name, reads: { r1: File, r2?: File }, options: { k, minHitLen } }
+//   { type: 'run', index: name | { custom: true, prefix, files: {1..4: File} }, reads: { r1: File, r2?: File }, options: { k, minHitLen } }
+//     (a custom index is the user's own .cfr files, read in place with WORKERFS)
 //   { type: 'cleanup' }   (page is closing: delete this tab's result file)
 // Messages out:
 //   { type: 'index', name, state: 'downloading'|'ready', loaded, total, manifest, cached }
@@ -157,6 +158,12 @@ async function newModule(factory, wasmFile) {
 function writeIndex(mod, names) {
   mod.FS.mkdir('/idx');
   for (const n of names) mod.FS.writeFile('/idx/' + n, indexFiles.get(n));
+}
+
+// The user's own index files, mounted read-only instead of copied.
+function mountIndex(mod, prefix, files, nums) {
+  mod.FS.mkdir('/idx');
+  mod.FS.mount(mod.WORKERFS, { blobs: nums.map((i) => ({ name: `${prefix}.${i}.cfr`, data: files[i] })) }, '/idx');
 }
 
 function callMain(mod, args) {
@@ -339,14 +346,27 @@ async function run({ index, reads, options }) {
   const timings = {};
   let t = performance.now();
   post({ type: 'progress', stage: 'Loading index', fraction: 0 });
-  await loadIndex(index);
-  if (!manifest || manifest.name !== index) throw new Error('The selected index changed during the run.');
+  const custom = typeof index === 'object' && index !== null && index.custom;
+  let prefix, addIndex;
+  if (custom) {
+    // Release any prebuilt index; the user's files are read in place.
+    manifest = indexFiles = indexPromise = loadingName = null;
+    prefix = index.prefix;
+    addIndex = (mod, nums) => mountIndex(mod, prefix, index.files, nums);
+    const size = [1, 2, 3, 4].reduce((s, i) => s + index.files[i].size, 0);
+    post({ type: 'log', line: `Using your own index "${prefix}" (${(size / 1e6).toFixed(1)} MB) from this computer.` });
+  } else {
+    await loadIndex(index);
+    if (!manifest || manifest.name !== index) throw new Error('The selected index changed during the run.');
+    prefix = manifest.name;
+    addIndex = (mod, nums) => writeIndex(mod, nums.map(idxName));
+  }
   timings.index = performance.now() - t;
 
   // Classification
   t = performance.now();
   const cls = await newModule(createCentrifuger, 'centrifuger.wasm');
-  writeIndex(cls, [idxName(1), idxName(2), idxName(4)]);
+  addIndex(cls, [1, 2, 4]);
   cls.FS.mkdir('/in');
   cls.FS.mkdir('/out');
   const blobs = [{ name: 'reads_1', data: reads.r1 }];
@@ -368,8 +388,10 @@ async function run({ index, reads, options }) {
   const posByFile = {};
   const origRead = cls.WORKERFS.stream_ops.read;
   let lastPost = 0;
+  const readNames = new Set(blobs.map((b) => b.name)); // not the index files of a custom index
   cls.WORKERFS.stream_ops.read = function (stream, buffer, offset, length, position) {
     const n = origRead.call(this, stream, buffer, offset, length, position);
+    if (!readNames.has(stream.node.name)) return n;
     posByFile[stream.node.name] = Number(position) + n;
     const now = performance.now();
     if (now - lastPost > 200) {
@@ -380,7 +402,7 @@ async function run({ index, reads, options }) {
     return n;
   };
 
-  const args = ['--wasm-stdout', '/out/class.tsv', '-x', '/idx/' + manifest.name, '-t', '1'];
+  const args = ['--wasm-stdout', '/out/class.tsv', '-x', '/idx/' + prefix, '-t', '1'];
   if (reads.r2) args.push('-1', '/in/reads_1', '-2', '/in/reads_2');
   else args.push('-u', '/in/reads_1');
   if (options.k && options.k > 1) args.push('-k', String(options.k));
@@ -391,6 +413,7 @@ async function run({ index, reads, options }) {
     gz.end();
   } catch (e) {
     sink.abort();
+    if (custom) e.message += ' Check that the four index files come from one centrifuger-build run.';
     throw e;
   }
   cls.FS.unmount('/in');
@@ -407,10 +430,10 @@ async function run({ index, reads, options }) {
   const reports = {};
   for (const [key, fmt] of Object.entries(formats)) {
     const q = await newModule(createCentrifugerQuant, 'centrifuger-quant.wasm');
-    writeIndex(q, [idxName(2), idxName(3)]);
+    addIndex(q, [2, 3]);
     q.FS.mkdir('/c');
     q.FS.mount(q.WORKERFS, { blobs: [{ name: 'class.tsv.gz', data: classTsv }] }, '/c');
-    callMain(q, ['--wasm-stdout', '/quant.tsv', '-x', '/idx/' + manifest.name, '-c', '/c/class.tsv.gz', '--output-format', fmt]);
+    callMain(q, ['--wasm-stdout', '/quant.tsv', '-x', '/idx/' + prefix, '-c', '/c/class.tsv.gz', '--output-format', fmt]);
     reports[key] = q.FS.readFile('/quant.tsv', { encoding: 'utf8' });
     q.FS.unmount('/c');
   }

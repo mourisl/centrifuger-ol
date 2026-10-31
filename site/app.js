@@ -11,6 +11,8 @@ const state = {
   r2: null,
   running: false,
   loadedIndex: null,
+  customIndex: null, // { prefix, files: {1..4: File}, size } when the user picked their own index
+  customError: null,
   results: null, // { rows, classTsv (gzip Blob, on disk when OPFS is available), reports, stats, timings }
   sortKey: 'numReads',
   sortAsc: false,
@@ -43,14 +45,71 @@ window.addEventListener('pagehide', (e) => {
 const STORE_KEY = 'centrifuger-web-index';
 let catalog = null;
 
+// The user's own index: four <prefix>.<i>.cfr files picked from disk.
+const CUSTOM = '__custom__';
+const CUSTOM_ENTRY = { name: CUSTOM, custom: true, title: 'Your own index', example: null, defaultRank: 'genus' };
+const CUSTOM_WARN_SIZE = 2e9;
+
 function currentIndex() {
   const name = $('index-select').value;
+  if (name === CUSTOM) return CUSTOM_ENTRY;
   return catalog ? catalog.indices.find((x) => x.name === name) : null;
+}
+
+// Checks a file selection: one shared prefix and all of <prefix>.1-4.cfr.
+function readCustomIndex(fileList) {
+  const files = {};
+  const prefixes = new Set();
+  const other = [];
+  for (const f of fileList) {
+    const m = /^(.+)\.([1-4])\.cfr$/.exec(f.name);
+    if (!m) other.push(f.name);
+    else {
+      prefixes.add(m[1]);
+      files[m[2]] = f;
+    }
+  }
+  if (other.length) return { error: `Not Centrifuger index files: ${other.join(', ')}.` };
+  if (!prefixes.size) return { error: 'Select the four .cfr files.' };
+  if (prefixes.size > 1) return { error: `The files come from different indices: ${[...prefixes].join(', ')}.` };
+  const prefix = [...prefixes][0];
+  const missing = [1, 2, 3, 4].filter((i) => !files[i]).map((i) => `${prefix}.${i}.cfr`);
+  if (missing.length) return { error: `Missing ${missing.join(', ')}.` };
+  return { prefix, files, size: [1, 2, 3, 4].reduce((s, i) => s + files[i].size, 0) };
+}
+
+function showCustomIndex() {
+  const c = state.customIndex;
+  $('index-desc').textContent =
+    'Classify against a Centrifuger index on this computer; the files are read locally and never uploaded. ' +
+    'Select the four files <name>.1.cfr … <name>.4.cfr from one centrifuger-build output ' +
+    '(nucleotide or protein indices built by native Centrifuger work as they are).';
+  $('index-files').replaceChildren();
+  const msg = $('custom-msg');
+  msg.classList.toggle('bad', !!(state.customError || (c && c.size > CUSTOM_WARN_SIZE)));
+  if (state.customError) msg.textContent = state.customError;
+  else if (c)
+    msg.textContent =
+      `Index "${c.prefix}": 4 files, ${fmtBytes(c.size)}; needs roughly ${fmtBytes(c.size * 1.5)} of memory while running.` +
+      (c.size > CUSTOM_WARN_SIZE ? ' This is probably too large for the browser (WebAssembly memory is capped at 8 GB).' : '');
+  else msg.textContent = 'No files selected yet. The files have to be selected again after the page is reloaded.';
+  const pill = $('index-status');
+  pill.textContent = c ? 'Local files' : 'Choose files';
+  pill.classList.toggle('ready', !!c);
+  $('index-progress').hidden = true;
+  $('example').disabled = true;
+  $('example-note').textContent = 'No example data for your own index.';
 }
 
 function showIndex() {
   const ix = currentIndex();
   if (!ix) return;
+  $('custom-index').hidden = !ix.custom;
+  if (ix.custom) {
+    showCustomIndex();
+    updateInputs();
+    return;
+  }
   $('index-desc').textContent =
     `${ix.description} ${fmtInt.format(ix.sequences)} ${ix.protein ? 'proteins' : 'sequences'}, ${ix.taxonomy} taxonomy, built ${ix.built} with ` +
     `Centrifuger ${ix.centrifugerVersion}. Download ${fmtBytes(ix.size)} (cached by your browser after the first run); ` +
@@ -94,6 +153,7 @@ if (!supported) {
         ['Nucleotide', c.indices.filter((ix) => !ix.protein)],
         ['Protein (translated search)', c.indices.filter((ix) => ix.protein)],
       ].filter(([, list]) => list.length);
+      groups.push(['Your own index', [{ name: CUSTOM, label: 'Use index files from this computer…' }]]);
       sel.replaceChildren(
         ...groups.map(([label, list]) => {
           const g = document.createElement('optgroup');
@@ -101,7 +161,7 @@ if (!supported) {
           for (const ix of list) {
             const o = document.createElement('option');
             o.value = ix.name;
-            o.textContent = `${ix.title} (${fmtBytes(ix.size)})`;
+            o.textContent = ix.label || `${ix.title} (${fmtBytes(ix.size)})`;
             g.appendChild(o);
           }
           return g;
@@ -113,7 +173,7 @@ if (!supported) {
       } catch (e) {
         // storage unavailable
       }
-      sel.value = c.indices.some((ix) => ix.name === saved) ? saved : c.default;
+      sel.value = saved === CUSTOM || c.indices.some((ix) => ix.name === saved) ? saved : c.default;
       sel.disabled = false;
       showIndex();
     })
@@ -126,6 +186,12 @@ if (!supported) {
     } catch (e) {
       // storage unavailable
     }
+    showIndex();
+  });
+  $('custom-files').addEventListener('change', () => {
+    const r = readCustomIndex($('custom-files').files);
+    state.customIndex = r.error ? null : r;
+    state.customError = r.error || null;
     showIndex();
   });
 }
@@ -145,7 +211,9 @@ function updateInputs() {
       : 'Drop a file here or click to choose' + (n === 1 ? ' (.fq, .fastq, .fa, optionally .gz)' : '');
     $(`drop${n}`).classList.toggle('has-file', !!f);
   }
-  $('run').disabled = !supported || state.running || !state.r1 || (paired && !state.r2);
+  const ix = currentIndex();
+  $('run').disabled =
+    !supported || state.running || !state.r1 || (paired && !state.r2) || !ix || (ix.custom && !state.customIndex);
 }
 
 for (const n of [1, 2]) {
@@ -209,7 +277,8 @@ function startRun() {
   const paired = layout() === 'paired';
   if (paired && !state.r2) return;
   const ix = currentIndex();
-  if (!ix) return;
+  if (!ix || (ix.custom && !state.customIndex)) return;
+  const custom = ix.custom ? state.customIndex : null;
   state.running = true;
   state.runIndex = ix;
   $('index-select').disabled = true;
@@ -220,10 +289,11 @@ function startRun() {
   state.startedAt = performance.now();
   const k = parseInt($('opt-k').value, 10);
   const minHitLen = parseInt($('opt-minhit').value, 10);
-  log(`--- Run: ${state.r1.name}${paired ? ' + ' + state.r2.name : ''} against ${ix.name}`);
+  log(`--- Run: ${state.r1.name}${paired ? ' + ' + state.r2.name : ''} against ${custom ? 'your index "' + custom.prefix + '"' : ix.name}`);
+  if (custom) state.loadedIndex = null; // the worker releases any prebuilt index
   worker.postMessage({
     type: 'run',
-    index: ix.name,
+    index: custom ? { custom: true, prefix: custom.prefix, files: custom.files } : ix.name,
     reads: { r1: state.r1, r2: paired ? state.r2 : null },
     options: {
       k: Number.isFinite(k) && k > 0 ? k : 1,

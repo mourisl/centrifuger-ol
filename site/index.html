@@ -31,6 +31,12 @@
       <select id="index-select" aria-label="Reference index" disabled><option>Loading…</option></select>
       <p id="index-desc" class="muted">Loading index information…</p>
       <p id="index-files" class="muted small"></p>
+      <div id="custom-index" class="custom-index" hidden>
+        <label><span>Index files (<code>&lt;name&gt;.1.cfr</code> … <code>&lt;name&gt;.4.cfr</code>)</span>
+          <input type="file" id="custom-files" multiple accept=".cfr">
+        </label>
+        <p id="custom-msg" class="small" role="status"></p>
+      </div>
       <div class="progress" id="index-progress" hidden><div class="bar"></div></div>
     </section>
 
